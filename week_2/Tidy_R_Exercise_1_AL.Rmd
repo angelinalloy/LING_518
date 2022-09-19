@@ -49,13 +49,15 @@ Your turn:
 (Ex1) Create a copy of "s9" called "s9_b", and capitalise all the column names. Hint: if turning all letters to lowercase is tolower, turning all letters to uppercase must be...
 
 ```{r}
-
+s9_b <- s9 %>%
+  rename_with(toupper)
 ```
 
 (Ex2) Using s9_b, rename the column "ISSUE" to "NUMBER".
 
 ```{r}
-
+s9_b <- s9_b %>% 
+  rename(NUMBER="ISSUE")
 ```
 
 We now add all the data sets together to form a single data set. This is done using bind_rows(), which simply joins data sets together vertically (i.e. by rows). This only works if the data sets have the same column names and the same data types in each column. For instance, if s7 had a column called "misc" that the other data sets did not, we would get an error message; and if s13 had characters in the issue column instead of numbers, we would also get an error message.
@@ -83,7 +85,8 @@ Your turn!
 (Ex3) Print a version of all_s with all columns that contain the letter u removed. Hint: two ways to do this: brute force (you find and list the relevant columns); OR there is a function contains(), which you can use as  an argument to select() as if it was a column name. Combined with the minus sign, this function will specify a condition for which columns should be  excluded.
 
 ```{r}
-
+all_s <- all_s %>%
+  select(-(contains("u")))
 ```
 
 ## Adding new columns
@@ -100,7 +103,8 @@ Your turn:
 (Ex4) Add a new column called bayesian_mixed that codes whether a paper uses bayesian mixed effects models. Hint: you'll need to use a logical operator on two logical columns here. We looked at these last time very briefly... It's one of the following: &, |, !
 
 ```{r}
-
+all_s <- all_s %>% 
+  mutate(bayesian_mixed = mixed_effects == TRUE & bayesian == TRUE)
 ```
 
 ## Filtering
@@ -117,7 +121,8 @@ Your turn:
 (Ex5) Display (not save!) a version of the data set with all papers published before 2021 removed.
 
 ```{r}
-
+all_s %>% 
+  filter(all_s$recent == "recent")
 ```
 
 ## Grouping and summarising
@@ -137,7 +142,11 @@ Your turn:
 (Ex6) Do the cross-tabulation for one of the other logical variables.
 
 ```{r}
-
+all_s %>% 
+  group_by(recent) %>% 
+  summarise(n=sum(bayesian_mixed),
+            prop=mean(bayesian_mixed)) %>% 
+  ungroup()
 ```
 
 ## Homework
